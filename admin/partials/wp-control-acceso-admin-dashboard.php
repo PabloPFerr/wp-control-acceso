@@ -37,7 +37,7 @@ $registros = $wpdb->get_results("
             <div class="card bg-primary text-white">
                 <div class="card-body">
                     <h5 class="card-title">
-                        <i class="fas fa-users"></i> Total Usuarios
+                        <i class="fas fa-users"></i> <?php esc_html_e('Total Usuarios', 'wp-control-acceso'); ?>
                     </h5>
                     <h2><?php echo $total_usuarios['total_users']; ?></h2>
                 </div>
@@ -47,7 +47,7 @@ $registros = $wpdb->get_results("
             <div class="card bg-success text-white">
                 <div class="card-body">
                     <h5 class="card-title">
-                        <i class="fas fa-user-check"></i> Usuarios Activos
+                        <i class="fas fa-user-check"></i> <?php esc_html_e('Usuarios Activos', 'wp-control-acceso'); ?>
                     </h5>
                     <h2><?php echo $usuarios_activos; ?></h2>
                 </div>
@@ -57,7 +57,7 @@ $registros = $wpdb->get_results("
             <div class="card bg-info text-white">
                 <div class="card-body">
                     <h5 class="card-title">
-                        <i class="fas fa-clock"></i> Registros Hoy
+                        <i class="fas fa-clock"></i> <?php esc_html_e('Registros Hoy', 'wp-control-acceso'); ?>
                     </h5>
                     <h2><?php echo $registros_hoy; ?></h2>
                 </div>
@@ -69,34 +69,34 @@ $registros = $wpdb->get_results("
     <div class="card mt-4">
         <div class="card-header">
             <h5 class="mb-0">
-                <i class="fas fa-list"></i> Registros de Hoy
+                <i class="fas fa-list"></i> <?php esc_html_e('Registros de Hoy', 'wp-control-acceso'); ?>
             </h5>
         </div>
         <div class="card-body">
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th><i class="fas fa-user"></i> Usuario</th>
-                        <th><i class="fas fa-clock"></i> Entrada</th>
-                        <th><i class="fas fa-clock"></i> Salida</th>
-                        <th><i class="fas fa-hourglass-half"></i> Duración</th>
-                        <th><i class="fas fa-circle"></i> Estado</th>
+                        <th><i class="fas fa-user"></i> <?php esc_html_e('Usuario', 'wp-control-acceso'); ?></th>
+                        <th><i class="fas fa-clock"></i> <?php esc_html_e('Entrada', 'wp-control-acceso'); ?></th>
+                        <th><i class="fas fa-clock"></i> <?php esc_html_e('Salida', 'wp-control-acceso'); ?></th>
+                        <th><i class="fas fa-hourglass-half"></i> <?php esc_html_e('Duración', 'wp-control-acceso'); ?></th>
+                        <th><i class="fas fa-circle"></i> <?php esc_html_e('Estado', 'wp-control-acceso'); ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($registros as $registro): ?>
                     <tr>
                         <td><?php echo esc_html($registro->display_name); ?></td>
-                        <td><?php echo date('H:i:s', strtotime($registro->hora_entrada)); ?></td>
+                        <td><?php echo esc_html(date_i18n(get_option('time_format'), strtotime($registro->hora_entrada))); ?></td>
                         <td>
                             <?php 
                             if ($registro->hora_salida) {
-                                echo date('H:i:s', strtotime($registro->hora_salida));
+                                echo esc_html(date_i18n(get_option('time_format'), strtotime($registro->hora_salida)));
                                 if ($registro->cierre_automatico) {
-                                    echo ' <span class="badge bg-warning" title="Cierre automático"><i class="fas fa-robot"></i></span>';
+                                    echo ' <span class="badge bg-warning" title="' . esc_attr__('Cierre automático', 'wp-control-acceso') . '"><i class="fas fa-robot"></i></span>';
                                 }
                             } else {
-                                echo '<span class="badge bg-warning">En curso</span>';
+                                echo '<span class="badge bg-warning">' . esc_html__('En curso', 'wp-control-acceso') . '</span>';
                             }
                             ?>
                         </td>
@@ -104,7 +104,7 @@ $registros = $wpdb->get_results("
                             <?php 
                             if ($registro->duracion) {
                                 echo '<span class="badge bg-info">' . 
-                                    number_format($registro->duracion, 2) . ' horas</span>';
+                                    esc_html(sprintf(__('%s horas', 'wp-control-acceso'), number_format_i18n($registro->duracion, 2))) . '</span>';
                             } else {
                                 echo '<span class="badge bg-secondary">-</span>';
                             }
@@ -112,9 +112,9 @@ $registros = $wpdb->get_results("
                         </td>
                         <td>
                             <?php if (!$registro->hora_salida): ?>
-                                <span class="badge bg-primary">Activo</span>
+                                <span class="badge bg-primary"><?php esc_html_e('Activo', 'wp-control-acceso'); ?></span>
                             <?php else: ?>
-                                <span class="badge bg-success">Finalizado</span>
+                                <span class="badge bg-success"><?php esc_html_e('Finalizado', 'wp-control-acceso'); ?></span>
                             <?php endif; ?>
                         </td>
                     </tr>

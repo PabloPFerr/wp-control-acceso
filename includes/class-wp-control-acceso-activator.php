@@ -62,17 +62,64 @@ class WP_Control_Acceso_Activator {
         // Asignar capacidades al rol de administrador
         $admin = get_role('administrator');
         if ($admin) {
-            $admin->add_cap('control_acceso_register_attendance');
-            $admin->add_cap('control_acceso_view_own_reports');
-            $admin->add_cap('control_acceso_view_reports');
+            $admin->add_cap('control_acceso_register_attendance'); // Can clock in/out
+            $admin->add_cap('control_acceso_view_own_reports');   // Can view their own reports
+            $admin->add_cap('control_acceso_view_reports');       // Can view all reports (admin context)
+            $admin->add_cap('control_acceso_manage_users');       // Can manage plugin users/roles
+            $admin->add_cap('control_acceso_manage_all');         // Can manage all plugin settings
         }
 
-        // Debug: Verificar que el rol se creó correctamente
-        $empleado = get_role('empleado');
-        if ($empleado) {
-            error_log('Rol de empleado creado/actualizado con capacidades: ' . print_r($empleado->capabilities, true));
-        } else {
-            error_log('Error: No se pudo crear el rol de empleado');
+        // Remover roles anteriores para asegurar una actualización limpia de capacidades
+        remove_role('control_acceso_supervisor');
+        remove_role('control_acceso_auditor');
+
+        // Crear rol de Supervisor
+        add_role(
+            'control_acceso_supervisor',
+            __('Supervisor de Acceso', 'wp-control-acceso'),
+            array(
+                'read' => true, // Basic WP capability
+                'control_acceso_manage_users' => true,
+                'control_acceso_view_reports' => true,
+                // Supervisors might also need to register their own attendance
+                'control_acceso_register_attendance' => true, 
+                'control_acceso_view_own_reports' => true,
+            )
+        );
+
+        // Crear rol de Auditor
+        add_role(
+            'control_acceso_auditor',
+            __('Auditor de Acceso', 'wp-control-acceso'),
+            array(
+                'read' => true, // Basic WP capability
+                'control_acceso_view_reports' => true,
+                 // Auditors might also need to register their own attendance
+                'control_acceso_register_attendance' => true,
+                'control_acceso_view_own_reports' => true,
+            )
+        );
+
+        // Debug: Verificar que los roles se crearon correctamente
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            $empleado_role = get_role('empleado');
+            if ($empleado_role) {
+                error_log('WP Control Acceso Debug: Rol "empleado" creado/actualizado con capacidades: ' . print_r($empleado_role->capabilities, true));
+            } else {
+                error_log('WP Control Acceso Debug: Error: No se pudo crear/verificar el rol "empleado".');
+            }
+            $supervisor_role = get_role('control_acceso_supervisor');
+            if ($supervisor_role) {
+                error_log('WP Control Acceso Debug: Rol "control_acceso_supervisor" creado/actualizado con capacidades: ' . print_r($supervisor_role->capabilities, true));
+            } else {
+                error_log('WP Control Acceso Debug: Error: No se pudo crear/verificar el rol "control_acceso_supervisor".');
+            }
+            $auditor_role = get_role('control_acceso_auditor');
+            if ($auditor_role) {
+                error_log('WP Control Acceso Debug: Rol "control_acceso_auditor" creado/actualizado con capacidades: ' . print_r($auditor_role->capabilities, true));
+            } else {
+                error_log('WP Control Acceso Debug: Error: No se pudo crear/verificar el rol "control_acceso_auditor".');
+            }
         }
     }
 

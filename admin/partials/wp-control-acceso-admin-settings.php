@@ -18,7 +18,7 @@ if (isset($_POST['wp_control_acceso_save_settings']) && check_admin_referer('wp_
     $notificaciones_email = isset($_POST['notificaciones_email']) ? 1 : 0;
     update_option('wp_control_acceso_notificaciones_email', $notificaciones_email);
 
-    echo '<div class="notice notice-success is-dismissible"><p>Configuración guardada.</p></div>';
+    echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Configuración guardada.', 'wp-control-acceso') . '</p></div>';
 }
 
 // Obtener configuraciones actuales
@@ -28,46 +28,46 @@ $notificaciones_email = get_option('wp_control_acceso_notificaciones_email', 0);
 ?>
 
 <div class="wrap">
-    <h1>Configuración de Control de Acceso</h1>
+    <h1><?php esc_html_e('Configuración de Control de Acceso', 'wp-control-acceso'); ?></h1>
 
     <form method="post" action="">
         <?php wp_nonce_field('wp_control_acceso_settings'); ?>
 
         <table class="form-table">
             <tr>
-                <th scope="row">Cierre Automático</th>
+                <th scope="row"><?php esc_html_e('Cierre Automático', 'wp-control-acceso'); ?></th>
                 <td>
                     <label for="cierre_automatico">
                         <input type="checkbox" name="cierre_automatico" id="cierre_automatico" 
                                value="1" <?php checked($cierre_automatico, 1); ?>>
-                        Habilitar cierre automático de registros
+                        <?php esc_html_e('Habilitar cierre automático de registros', 'wp-control-acceso'); ?>
                     </label>
                     <p class="description">
-                        Si está habilitado, los registros sin hora de salida se cerrarán automáticamente.
+                        <?php esc_html_e('Si está habilitado, los registros sin hora de salida se cerrarán automáticamente.', 'wp-control-acceso'); ?>
                     </p>
                 </td>
             </tr>
 
             <tr>
-                <th scope="row">Hora de Cierre Automático</th>
+                <th scope="row"><?php esc_html_e('Hora de Cierre Automático', 'wp-control-acceso'); ?></th>
                 <td>
                     <input type="time" name="hora_cierre" value="<?php echo esc_attr($hora_cierre); ?>">
                     <p class="description">
-                        Hora a la que se ejecutará el cierre automático de registros.
+                        <?php esc_html_e('Hora a la que se ejecutará el cierre automático de registros.', 'wp-control-acceso'); ?>
                     </p>
                 </td>
             </tr>
 
             <tr>
-                <th scope="row">Notificaciones por Email</th>
+                <th scope="row"><?php esc_html_e('Notificaciones por Email', 'wp-control-acceso'); ?></th>
                 <td>
                     <label for="notificaciones_email">
                         <input type="checkbox" name="notificaciones_email" id="notificaciones_email" 
                                value="1" <?php checked($notificaciones_email, 1); ?>>
-                        Enviar notificaciones por email
+                        <?php esc_html_e('Enviar notificaciones por email', 'wp-control-acceso'); ?>
                     </label>
                     <p class="description">
-                        Si está habilitado, se enviarán notificaciones por email cuando se registren entradas/salidas.
+                        <?php esc_html_e('Si está habilitado, se enviarán notificaciones por email cuando se registren entradas/salidas.', 'wp-control-acceso'); ?>
                     </p>
                 </td>
             </tr>
@@ -75,7 +75,7 @@ $notificaciones_email = get_option('wp_control_acceso_notificaciones_email', 0);
 
         <p class="submit">
             <input type="submit" name="wp_control_acceso_save_settings" class="button button-primary" 
-                   value="Guardar Cambios">
+                   value="<?php esc_attr_e('Guardar Cambios', 'wp-control-acceso'); ?>">
         </p>
     </form>
 </div>

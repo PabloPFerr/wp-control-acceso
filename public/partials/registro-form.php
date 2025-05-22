@@ -18,7 +18,7 @@ $registro_activo = $wpdb->get_row($wpdb->prepare("
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0">
-                <i class="fas fa-clock"></i> Control de Asistencia
+                <i class="fas fa-clock"></i> <?php esc_html_e('Control de Asistencia', 'wp-control-acceso'); ?>
             </h5>
         </div>
         <div class="card-body">
@@ -39,15 +39,18 @@ $registro_activo = $wpdb->get_row($wpdb->prepare("
                     <div class="mb-3">
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle"></i>
-                            Entrada registrada a las <?php echo date('H:i:s', strtotime($registro_activo->hora_entrada)); ?>
+                            <?php 
+                            // translators: %s is the time of clock-in.
+                            printf(esc_html__('Entrada registrada a las %s', 'wp-control-acceso'), esc_html(date_i18n(get_option('time_format'), strtotime($registro_activo->hora_entrada)))); 
+                            ?>
                         </div>
                     </div>
                     <button type="button" class="btn btn-danger btn-lg" onclick="registrarSalida()">
-                        <i class="fas fa-sign-out-alt"></i> Registrar Salida
+                        <i class="fas fa-sign-out-alt"></i> <?php esc_html_e('Registrar Salida', 'wp-control-acceso'); ?>
                     </button>
                 <?php else: ?>
                     <button type="button" class="btn btn-primary btn-lg" onclick="registrarEntrada()">
-                        <i class="fas fa-sign-in-alt"></i> Registrar Entrada
+                        <i class="fas fa-sign-in-alt"></i> <?php esc_html_e('Registrar Entrada', 'wp-control-acceso'); ?>
                     </button>
                 <?php endif; ?>
             </div>
@@ -69,16 +72,16 @@ function registrarEntrada() {
         },
         success: function(response) {
             if (response.success) {
-                mostrarMensaje('success', response.data);
+                mostrarMensaje('success', response.data); // Messages from AJAX are already i18n'd
                 setTimeout(function() {
                     location.reload();
                 }, 1500);
             } else {
-                mostrarMensaje('danger', response.data);
+                mostrarMensaje('danger', response.data); // Messages from AJAX are already i18n'd
             }
         },
         error: function() {
-            mostrarMensaje('danger', 'Error al procesar la solicitud');
+            mostrarMensaje('danger', '<?php echo esc_js(__('Error al procesar la solicitud', 'wp-control-acceso')); ?>');
         }
     });
 }
@@ -93,23 +96,25 @@ function registrarSalida() {
         },
         success: function(response) {
             if (response.success) {
-                mostrarMensaje('success', response.data);
+                mostrarMensaje('success', response.data); // Messages from AJAX are already i18n'd
                 setTimeout(function() {
                     location.reload();
                 }, 1500);
             } else {
-                mostrarMensaje('danger', response.data);
+                mostrarMensaje('danger', response.data); // Messages from AJAX are already i18n'd
             }
         },
         error: function() {
-            mostrarMensaje('danger', 'Error al procesar la solicitud');
+            mostrarMensaje('danger', '<?php echo esc_js(__('Error al procesar la solicitud', 'wp-control-acceso')); ?>');
         }
     });
 }
 
 function mostrarMensaje(tipo, mensaje) {
+    // Ensure 'mensaje' is treated as HTML if it contains HTML, otherwise, it might be better to treat it as text.
+    // For this plugin, AJAX responses (response.data) are simple strings or already escaped HTML from WP_Error.
     var mensajeDiv = jQuery('#mensaje-respuesta');
-    mensajeDiv.html('<div class="alert alert-' + tipo + '">' + mensaje + '</div>');
+    mensajeDiv.html('<div class="alert alert-' + tipo + '">' + mensaje + '</div>'); // Assuming 'mensaje' is safe or already escaped.
     mensajeDiv.show();
 }
 </script>

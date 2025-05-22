@@ -30,54 +30,55 @@ foreach ($datos_grafico as $dato) {
     <!-- Filtros -->
     <div class="card mb-4">
         <div class="card-body">
-            <form method="get" action="<?php echo admin_url('admin.php'); ?>" class="row g-3">
+            <form method="get" action="<?php echo esc_url(admin_url('admin.php')); ?>" class="row g-3">
                 <input type="hidden" name="page" value="wp-control-acceso-reports">
                 
                 <div class="col-md-3">
-                    <label class="form-label">Fecha Inicio</label>
-                    <input type="date" name="fecha_inicio" class="form-control" 
+                    <label for="fecha_inicio" class="form-label"><?php esc_html_e('Fecha Inicio', 'wp-control-acceso'); ?></label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" 
                            value="<?php echo esc_attr($fecha_inicio); ?>">
                 </div>
                 
                 <div class="col-md-3">
-                    <label class="form-label">Fecha Fin</label>
-                    <input type="date" name="fecha_fin" class="form-control" 
+                    <label for="fecha_fin" class="form-label"><?php esc_html_e('Fecha Fin', 'wp-control-acceso'); ?></label>
+                    <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" 
                            value="<?php echo esc_attr($fecha_fin); ?>">
                 </div>
                 
                 <div class="col-md-3">
-                    <label class="form-label">Usuario</label>
+                    <label for="user_id_filter" class="form-label"><?php esc_html_e('Usuario', 'wp-control-acceso'); ?></label>
                     <?php
                     wp_dropdown_users(array(
                         'name' => 'user_id',
+                        'id' => 'user_id_filter',
                         'class' => 'form-control',
-                        'show_option_all' => 'Todos los usuarios',
+                        'show_option_all' => esc_html__('Todos los usuarios', 'wp-control-acceso'),
                         'selected' => $user_id
                     ));
                     ?>
                 </div>
                 
                 <div class="col-md-3">
-                    <label class="form-label">Tipo de Reporte</label>
-                    <select name="tipo" class="form-control">
+                    <label for="tipo_reporte_filter" class="form-label"><?php esc_html_e('Tipo de Reporte', 'wp-control-acceso'); ?></label>
+                    <select name="tipo" id="tipo_reporte_filter" class="form-control">
                         <option value="detallado" <?php selected($tipo_reporte, 'detallado'); ?>>
-                            Detallado
+                            <?php esc_html_e('Detallado', 'wp-control-acceso'); ?>
                         </option>
                         <option value="por_dia" <?php selected($tipo_reporte, 'por_dia'); ?>>
-                            Por Día
+                            <?php esc_html_e('Por Día', 'wp-control-acceso'); ?>
                         </option>
                         <option value="totales" <?php selected($tipo_reporte, 'totales'); ?>>
-                            Totales
+                            <?php esc_html_e('Totales', 'wp-control-acceso'); ?>
                         </option>
                     </select>
                 </div>
                 
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-filter"></i> Filtrar
+                        <i class="fas fa-filter"></i> <?php esc_html_e('Filtrar', 'wp-control-acceso'); ?>
                     </button>
                     <button type="button" class="btn btn-success" onclick="exportarExcel()">
-                        <i class="fas fa-file-excel"></i> Exportar a Excel
+                        <i class="fas fa-file-excel"></i> <?php esc_html_e('Exportar a Excel', 'wp-control-acceso'); ?>
                     </button>
                 </div>
             </form>
@@ -90,20 +91,20 @@ foreach ($datos_grafico as $dato) {
             <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item">
                     <a class="nav-link <?php echo $tipo_reporte === 'detallado' ? 'active' : ''; ?>" 
-                       href="?page=wp-control-acceso-reports&tipo=detallado">
-                        <i class="fas fa-list"></i> Registros Detallados
+                       href="<?php echo esc_url(admin_url('admin.php?page=wp-control-acceso-reports&tipo=detallado&fecha_inicio=' . $fecha_inicio . '&fecha_fin=' . $fecha_fin . '&user_id=' . $user_id)); ?>">
+                        <i class="fas fa-list"></i> <?php esc_html_e('Registros Detallados', 'wp-control-acceso'); ?>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo $tipo_reporte === 'por_dia' ? 'active' : ''; ?>" 
-                       href="?page=wp-control-acceso-reports&tipo=por_dia">
-                        <i class="fas fa-calendar-day"></i> Horas por Día
+                       href="<?php echo esc_url(admin_url('admin.php?page=wp-control-acceso-reports&tipo=por_dia&fecha_inicio=' . $fecha_inicio . '&fecha_fin=' . $fecha_fin . '&user_id=' . $user_id)); ?>">
+                        <i class="fas fa-calendar-day"></i> <?php esc_html_e('Horas por Día', 'wp-control-acceso'); ?>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo $tipo_reporte === 'totales' ? 'active' : ''; ?>" 
-                       href="?page=wp-control-acceso-reports&tipo=totales">
-                        <i class="fas fa-clock"></i> Horas Totales
+                       href="<?php echo esc_url(admin_url('admin.php?page=wp-control-acceso-reports&tipo=totales&fecha_inicio=' . $fecha_inicio . '&fecha_fin=' . $fecha_fin . '&user_id=' . $user_id)); ?>">
+                        <i class="fas fa-clock"></i> <?php esc_html_e('Horas Totales', 'wp-control-acceso'); ?>
                     </a>
                 </li>
             </ul>
@@ -114,25 +115,25 @@ foreach ($datos_grafico as $dato) {
                     <?php
                     $registros_detallados = $registros->get_registros_por_fecha($fecha_inicio, $fecha_fin, $user_id);
                     if (empty($registros_detallados)): ?>
-                        <div class="alert alert-info">No hay registros para mostrar.</div>
+                        <div class="alert alert-info"><?php esc_html_e('No hay registros para mostrar.', 'wp-control-acceso'); ?></div>
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Usuario</th>
-                                        <th>Entrada</th>
-                                        <th>Salida</th>
-                                        <th>Duración</th>
+                                        <th><?php esc_html_e('Usuario', 'wp-control-acceso'); ?></th>
+                                        <th><?php esc_html_e('Entrada', 'wp-control-acceso'); ?></th>
+                                        <th><?php esc_html_e('Salida', 'wp-control-acceso'); ?></th>
+                                        <th><?php esc_html_e('Duración', 'wp-control-acceso'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($registros_detallados as $registro): ?>
                                         <tr>
                                             <td><?php echo esc_html($registro->display_name); ?></td>
-                                            <td><?php echo esc_html($registro->hora_entrada); ?></td>
-                                            <td><?php echo $registro->hora_salida ? esc_html($registro->hora_salida) : 'En curso'; ?></td>
-                                            <td><?php echo $registro->duracion ? number_format($registro->duracion, 2) . ' horas' : '-'; ?></td>
+                                            <td><?php echo esc_html(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($registro->hora_entrada))); ?></td>
+                                            <td><?php echo $registro->hora_salida ? esc_html(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($registro->hora_salida))) : esc_html__('En curso', 'wp-control-acceso'); ?></td>
+                                            <td><?php echo $registro->duracion ? esc_html(sprintf(__('%s horas', 'wp-control-acceso'), number_format_i18n($registro->duracion, 2))) : '-'; ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -145,23 +146,23 @@ foreach ($datos_grafico as $dato) {
                     <?php
                     $registros_por_dia = $registros->get_horas_por_dia($fecha_inicio, $fecha_fin, $user_id);
                     if (empty($registros_por_dia)): ?>
-                        <div class="alert alert-info">No hay registros para mostrar.</div>
+                        <div class="alert alert-info"><?php esc_html_e('No hay registros para mostrar.', 'wp-control-acceso'); ?></div>
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Fecha</th>
-                                        <th>Usuario</th>
-                                        <th>Horas</th>
+                                        <th><?php esc_html_e('Fecha', 'wp-control-acceso'); ?></th>
+                                        <th><?php esc_html_e('Usuario', 'wp-control-acceso'); ?></th>
+                                        <th><?php esc_html_e('Horas', 'wp-control-acceso'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($registros_por_dia as $registro): ?>
                                         <tr>
-                                            <td><?php echo esc_html($registro->fecha); ?></td>
+                                            <td><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($registro->fecha))); ?></td>
                                             <td><?php echo esc_html($registro->display_name); ?></td>
-                                            <td><?php echo number_format($registro->horas_totales, 2); ?> horas</td>
+                                            <td><?php echo esc_html(sprintf(__('%s horas', 'wp-control-acceso'), number_format_i18n($registro->horas_totales, 2))); ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -174,16 +175,16 @@ foreach ($datos_grafico as $dato) {
                     <?php
                     $registros_totales = $registros->get_horas_totales($fecha_inicio, $fecha_fin);
                     if (empty($registros_totales)): ?>
-                        <div class="alert alert-info">No hay registros para mostrar.</div>
+                        <div class="alert alert-info"><?php esc_html_e('No hay registros para mostrar.', 'wp-control-acceso'); ?></div>
                     <?php else: ?>
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Usuario</th>
-                                        <th>Días Trabajados</th>
-                                        <th>Horas Totales</th>
-                                        <th>Promedio Diario</th>
+                                        <th><?php esc_html_e('Usuario', 'wp-control-acceso'); ?></th>
+                                        <th><?php esc_html_e('Días Trabajados', 'wp-control-acceso'); ?></th>
+                                        <th><?php esc_html_e('Horas Totales', 'wp-control-acceso'); ?></th>
+                                        <th><?php esc_html_e('Promedio Diario', 'wp-control-acceso'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -191,8 +192,8 @@ foreach ($datos_grafico as $dato) {
                                         <tr>
                                             <td><?php echo esc_html($registro->display_name); ?></td>
                                             <td><?php echo esc_html($registro->dias_trabajados); ?></td>
-                                            <td><?php echo number_format($registro->horas_totales, 2); ?> horas</td>
-                                            <td><?php echo number_format($registro->horas_totales / $registro->dias_trabajados, 2); ?> horas</td>
+                                            <td><?php echo esc_html(sprintf(__('%s horas', 'wp-control-acceso'), number_format_i18n($registro->horas_totales, 2))); ?></td>
+                                            <td><?php echo ($registro->dias_trabajados > 0) ? esc_html(sprintf(__('%s horas', 'wp-control-acceso'), number_format_i18n($registro->horas_totales / $registro->dias_trabajados, 2))) : '-'; ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -210,7 +211,7 @@ foreach ($datos_grafico as $dato) {
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Horas por Día</h5>
+                    <h5 class="card-title mb-0"><?php esc_html_e('Horas por Día', 'wp-control-acceso'); ?></h5>
                 </div>
                 <div class="card-body grafico-container">
                     <canvas id="graficoHorasDia"></canvas>
@@ -222,7 +223,7 @@ foreach ($datos_grafico as $dato) {
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Horas Totales por Usuario</h5>
+                    <h5 class="card-title mb-0"><?php esc_html_e('Horas Totales por Usuario', 'wp-control-acceso'); ?></h5>
                 </div>
                 <div class="card-body grafico-container">
                     <canvas id="graficoTotalesUsuario"></canvas>
@@ -242,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data: {
             labels: <?php echo json_encode($labels); ?>,
             datasets: [{
-                label: 'Horas',
+                label: '<?php esc_html_e('Horas', 'wp-control-acceso'); ?>',
                 data: <?php echo json_encode($horas); ?>,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
@@ -254,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
             plugins: {
                 title: {
                     display: true,
-                    text: 'Horas Trabajadas por Día'
+                    text: '<?php esc_html_e('Horas Trabajadas por Día', 'wp-control-acceso'); ?>'
                 }
             },
             scales: {
@@ -262,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Horas'
+                        text: '<?php esc_html_e('Horas', 'wp-control-acceso'); ?>'
                     }
                 }
             }
@@ -273,10 +274,10 @@ document.addEventListener('DOMContentLoaded', function() {
     <?php
     $datos_totales = $registros->get_horas_totales($fecha_inicio, $fecha_fin);
     $usuarios = array();
-    $horas_totales = array();
+    $horas_totales_grafico = array(); // Renamed to avoid conflict with $horas from previous graph
     foreach ($datos_totales as $dato) {
         $usuarios[] = $dato->display_name;
-        $horas_totales[] = $dato->horas_totales;
+        $horas_totales_grafico[] = $dato->horas_totales;
     }
     ?>
     var ctxTotal = document.getElementById('graficoTotalesUsuario').getContext('2d');
@@ -285,8 +286,8 @@ document.addEventListener('DOMContentLoaded', function() {
         data: {
             labels: <?php echo json_encode($usuarios); ?>,
             datasets: [{
-                label: 'Horas Totales',
-                data: <?php echo json_encode($horas_totales); ?>,
+                label: '<?php esc_html_e('Horas Totales', 'wp-control-acceso'); ?>',
+                data: <?php echo json_encode($horas_totales_grafico); ?>,
                 backgroundColor: 'rgba(54, 162, 235, 0.5)',
                 borderColor: 'rgb(54, 162, 235)',
                 borderWidth: 1
@@ -298,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
             plugins: {
                 title: {
                     display: true,
-                    text: 'Horas Totales por Usuario'
+                    text: '<?php esc_html_e('Horas Totales por Usuario', 'wp-control-acceso'); ?>'
                 }
             },
             scales: {
@@ -306,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Horas'
+                        text: '<?php esc_html_e('Horas', 'wp-control-acceso'); ?>'
                     }
                 }
             }
@@ -315,12 +316,17 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function exportarExcel() {
-    var url = ajaxurl + '?action=wp_control_acceso_exportar&tipo=<?php echo $tipo_reporte; ?>' +
-        '&fecha_inicio=<?php echo $fecha_inicio; ?>' +
-        '&fecha_fin=<?php echo $fecha_fin; ?>' +
-        '&user_id=<?php echo $user_id; ?>' +
-        '&_wpnonce=' + wpControlAcceso.nonce;
-    window.location.href = url;
+    // Construct the URL for export
+    var exportUrl = new URL(ajaxurl);
+    exportUrl.searchParams.append('action', 'wp_control_acceso_exportar');
+    exportUrl.searchParams.append('tipo', '<?php echo esc_js($tipo_reporte); ?>');
+    exportUrl.searchParams.append('fecha_inicio', '<?php echo esc_js($fecha_inicio); ?>');
+    exportUrl.searchParams.append('fecha_fin', '<?php echo esc_js($fecha_fin); ?>');
+    exportUrl.searchParams.append('user_id', '<?php echo esc_js($user_id); ?>');
+    // Use the localized nonce for export
+    exportUrl.searchParams.append(wpControlAcceso.export_nonce_action, wpControlAcceso.export_nonce); 
+
+    window.location.href = exportUrl.toString();
 }
 </script>
 
